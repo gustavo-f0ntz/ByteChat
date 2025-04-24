@@ -1,16 +1,20 @@
 // Server.java
 import java.io.*;
 import java.net.*;
-import java.util.concurrent.CopyOnWriteArrayList;
 import java.nio.file.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Properties;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class Server {
-    private static final int PORT = 12345;
+    private static int PORT;
+    private static String CHAT_HISTORY_FILE;
     private static final CopyOnWriteArrayList<ClientHandler> clients = new CopyOnWriteArrayList<>();
 
     public static void main(String[] args) {
+        loadConfigurations();
+
         System.out.println("Chat server started on port " + PORT);
 
         try (ServerSocket serverSocket = new ServerSocket(PORT)) {
@@ -27,7 +31,20 @@ public class Server {
         }
     }
 
-    // Classe interna que representa um cliente conectado
+    private static void loadConfigurations() {
+        try (InputStream input = new FileInputStream("server_config.properties")) {
+            Properties prop = new Properties();
+            prop.load(input);
+
+            PORT = Integer.parseInt(prop.getProperty("port", "12345"));
+            CHAT_HISTORY_FILE = prop.getProperty("chatHistoryFile", "chat_history.txt");
+        } catch (IOException e) {
+            System.out.println("Failed to load configurations. Using default values.");
+            PORT = 12345;
+            CHAT_HISTORY_FILE = "chat_history.txt";
+        }
+    }
+
     private static class ClientHandler extends Thread {
         private Socket socket;
         private PrintWriter out;
@@ -38,9 +55,7 @@ public class Server {
         }
 
         public void run() {
-            try (
-                    BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            ) {
+            try (BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()))) {
                 out = new PrintWriter(socket.getOutputStream(), true);
 
                 // Recebe o nome de usuário
@@ -52,20 +67,20 @@ public class Server {
                 while ((message = in.readLine()) != null) {
                     broadcast(username + ": " + message);
                 }
-
             } catch (IOException e) {
                 System.out.println("Connection error with " + username);
             } finally {
                 try {
                     socket.close();
-                } catch (IOException e) {}
+                } catch (IOException e) {
+                    System.out.println("Error closing socket: " + e.getMessage());
+                }
 
                 clients.remove(this);
                 broadcast("❌ " + username + " left the chat");
             }
         }
 
-        // Envia uma mensagem para todos os clientes conectados
         private void broadcast(String message) {
             for (ClientHandler client : clients) {
                 client.out.println(message);
@@ -73,14 +88,13 @@ public class Server {
             saveMessageToTxt(message);
         }
 
-        // Salva a mensagem no arquivo chat_history.txt com data/hora
         private void saveMessageToTxt(String message) {
             try {
                 String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
                 String logLine = "[" + timestamp + "] " + message + System.lineSeparator();
 
                 Files.write(
-                        Paths.get("chat_history.txt"),
+                        Paths.get(CHAT_HISTORY_FILE),
                         logLine.getBytes(),
                         StandardOpenOption.CREATE, StandardOpenOption.APPEND
                 );
