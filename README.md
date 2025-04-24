@@ -52,30 +52,22 @@ java Server
 java ChatClientGUI
 ```
 
-🧠 Aprendizados nesse projeto
+### 🧠 Aprendizados nesse projeto
 
-Comunicação cliente-servidor usando sockets TCP
-
-Manipulação de threads para múltiplas conexões
-
-Criação de GUI com Java Swing
-
-Troca de mensagens entre processos
-
-Registro de logs com timestamps em arquivo .txt
+- Comunicação cliente-servidor usando sockets TCP
+- Manipulação de threads para múltiplas conexões
+- Criação de GUI com Java Swing
+- Troca de mensagens entre processos
+- Registro de logs com timestamps em arquivo .txt
 
 
-🛠 Próximos passos
+### 🛠 Próximos passos
 
- Adicionar criptografia nas mensagens
-
- Sistema de autenticação e login
-
- Melhorias na interface com layout mais moderno
-
- Suporte para comandos especiais (ex: /w, /clear)
-
- Comunicação em redes externas (via IP)
+- Adicionar criptografia nas mensagens
+- Sistema de autenticação e login
+- Melhorias na interface com layout mais moderno
+- Suporte para comandos especiais (ex: /w, /clear)
+- Comunicação em redes externas (via IP)
 
 
 
