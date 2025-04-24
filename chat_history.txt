@@ -1,0 +1,9 @@
+[2025-04-24 16:03:32] 🔔 teste1 joined the chat
+[2025-04-24 16:03:42] 🔔 teste2 joined the chat
+[2025-04-24 16:03:52] teste2: COMUNICANDO COM TESTE01
+[2025-04-24 16:04:02] teste1: OLÁ TESTE 02
+[2025-04-24 16:05:40] 🔔 gabriel099 joined the chat
+[2025-04-24 16:05:44] gabriel099: eae
+[2025-04-24 16:05:54] ❌ gabriel099 left the chat
+[2025-04-24 16:05:55] ❌ teste2 left the chat
+[2025-04-24 16:06:02] ❌ teste1 left the chat

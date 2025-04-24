@@ -19,15 +19,21 @@ public class Server {
 
         try (ServerSocket serverSocket = new ServerSocket(PORT)) {
             while (true) {
-                Socket clientSocket = serverSocket.accept();
-                System.out.println("New client connected: " + clientSocket.getInetAddress());
+                try {
+                    Socket clientSocket = serverSocket.accept();
+                    System.out.println("New client connected: " + clientSocket.getInetAddress());
 
-                ClientHandler handler = new ClientHandler(clientSocket);
-                clients.add(handler);
-                handler.start();
+                    ClientHandler handler = new ClientHandler(clientSocket);
+                    clients.add(handler);
+                    handler.start();
+                } catch (IOException e) {
+                    System.err.println("Error accepting client connection: " + e.getMessage());
+                    e.printStackTrace();
+                }
             }
         } catch (IOException e) {
-            System.out.println("Server error: " + e.getMessage());
+            System.err.println("Failed to start the server on port " + PORT + ": " + e.getMessage());
+            e.printStackTrace();
         }
     }
 
@@ -38,10 +44,15 @@ public class Server {
 
             PORT = Integer.parseInt(prop.getProperty("port", "12345"));
             CHAT_HISTORY_FILE = prop.getProperty("chatHistoryFile", "chat_history.txt");
+        } catch (FileNotFoundException e) {
+            System.err.println("Configuration file 'server_config.properties' not found. Using default values.");
         } catch (IOException e) {
-            System.out.println("Failed to load configurations. Using default values.");
-            PORT = 12345;
-            CHAT_HISTORY_FILE = "chat_history.txt";
+            System.err.println("Error reading configuration file: " + e.getMessage());
+        } catch (NumberFormatException e) {
+            System.err.println("Invalid port number in configuration file. Using default port 12345.");
+        } finally {
+            if (PORT == 0) PORT = 12345;
+            if (CHAT_HISTORY_FILE == null) CHAT_HISTORY_FILE = "chat_history.txt";
         }
     }
 
@@ -61,6 +72,9 @@ public class Server {
                 // Recebe o nome de usuário
                 out.println("Enter your username:");
                 username = in.readLine();
+                if (username == null || username.trim().isEmpty()) {
+                    username = "Anonymous";
+                }
                 broadcast("🔔 " + username + " joined the chat");
 
                 String message;
@@ -68,12 +82,13 @@ public class Server {
                     broadcast(username + ": " + message);
                 }
             } catch (IOException e) {
-                System.out.println("Connection error with " + username);
+                System.err.println("Connection error with client " + socket.getInetAddress() + ": " + e.getMessage());
+                e.printStackTrace();
             } finally {
                 try {
                     socket.close();
                 } catch (IOException e) {
-                    System.out.println("Error closing socket: " + e.getMessage());
+                    System.err.println("Error closing socket for client " + username + ": " + e.getMessage());
                 }
 
                 clients.remove(this);
@@ -99,7 +114,8 @@ public class Server {
                         StandardOpenOption.CREATE, StandardOpenOption.APPEND
                 );
             } catch (IOException e) {
-                System.out.println("Failed to save message to .txt: " + e.getMessage());
+                System.err.println("Failed to save message to file '" + CHAT_HISTORY_FILE + "': " + e.getMessage());
+                e.printStackTrace();
             }
         }
     }
