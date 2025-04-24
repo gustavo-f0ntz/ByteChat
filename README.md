@@ -38,4 +38,42 @@ ByteChat/
 git clone https://github.com/seu-usuario/ByteChat.git
 cd ByteChat/src
 ```
-### 2. Compile os arquivos
+### 2. Compile os arquivos:
+```bash
+javac ChatClientGUI.java Server.java
+```
+### 3. Rode o servidor:
+```bash
+java Server
+```
+### 4. Rode o(s) cliente(s):
+- Em outro terminal ou janelas diferentes. E para cada user/processo abra um novo.
+```bash
+java ChatClientGUI
+```
+
+🧠 Aprendizados nesse projeto
+Comunicação cliente-servidor usando sockets TCP
+
+Manipulação de threads para múltiplas conexões
+
+Criação de GUI com Java Swing
+
+Troca de mensagens entre processos
+
+Registro de logs com timestamps em arquivo .txt
+
+
+🛠 Próximos passos
+ Adicionar criptografia nas mensagens
+
+ Sistema de autenticação e login
+
+ Melhorias na interface com layout mais moderno
+
+ Suporte para comandos especiais (ex: /w, /clear)
+
+ Comunicação em redes externas (via IP)
+
+
+
