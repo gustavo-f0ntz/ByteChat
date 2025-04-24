@@ -53,6 +53,7 @@ java ChatClientGUI
 ```
 
 🧠 Aprendizados nesse projeto
+
 Comunicação cliente-servidor usando sockets TCP
 
 Manipulação de threads para múltiplas conexões
@@ -65,6 +66,7 @@ Registro de logs com timestamps em arquivo .txt
 
 
 🛠 Próximos passos
+
  Adicionar criptografia nas mensagens
 
  Sistema de autenticação e login
